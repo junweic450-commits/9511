@@ -1,0 +1,27 @@
+/* Enhanced accessibility styles for Know Your Rights platform */
+
+/* Increase base font size for better readability */
+:root {
+  --font-size: 18px; /* Increased from default 16px */
+}
+
+/* Focus indicators for keyboard navigation */
+*:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* Enhanced link visibility */
+a {
+  text-decoration-thickness: 2px;
+}
+
+/* Smooth scrolling for better UX */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Ensure sufficient line spacing for readability */
+p, li, span {
+  line-height: 1.6;
+}
