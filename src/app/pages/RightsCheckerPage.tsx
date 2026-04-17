@@ -1,12 +1,14 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router";
 import { Navigation } from "../components/Navigation";
 import { ProgressIndicator } from "../components/ProgressIndicator";
-import { RadioGroup } from "../components/ui/radio-group";
+import { VoiceToolbar } from "../components/VoiceToolbar";
+import { useSpeechSynthesis } from "../hooks/useSpeechSynthesis";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export function RightsCheckerPage() {
   const navigate = useNavigate();
+  const { speak, stop, isSpeaking } = useSpeechSynthesis();
   const [currentQuestion, setCurrentQuestion] = useState(1);
   const [answers, setAnswers] = useState<Record<number, string>>({});
 
@@ -51,6 +53,16 @@ export function RightsCheckerPage() {
 
   const totalQuestions = questions.length;
   const currentQuestionData = questions[currentQuestion - 1];
+
+  const questionSpeech = useMemo(() => {
+    const opts = currentQuestionData.options
+      .map((o, i) => `Choice ${i + 1}: ${o.label}`)
+      .join(". ");
+    return (
+      `Question ${currentQuestion} of ${totalQuestions}. ${currentQuestionData.question} ` +
+      `Your options are: ${opts}. Tap one answer to select it, then press Next.`
+    );
+  }, [currentQuestion, currentQuestionData, totalQuestions]);
 
   const handleAnswer = (value: string) => {
     setAnswers({ ...answers, [currentQuestion]: value });
@@ -97,13 +109,32 @@ export function RightsCheckerPage() {
             </p>
           </div>
 
-          {/* Question Card */}
+          {/* Question Card — radio group with listen-aloud for the whole step */}
           <div className="bg-white rounded-xl p-10 shadow-lg border-2 border-gray-200 mb-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-8">
-              {currentQuestionData.question}
-            </h2>
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-8">
+              <h2
+                id={`question-heading-${currentQuestion}`}
+                className="text-2xl sm:text-3xl font-semibold text-gray-900 leading-snug flex-1 pr-4"
+              >
+                {currentQuestionData.question}
+              </h2>
+              <VoiceToolbar
+                speak={speak}
+                stop={stop}
+                isSpeaking={isSpeaking}
+                speechText={questionSpeech}
+                listenLabel="Listen to question"
+                variant="dark"
+                className="shrink-0"
+              />
+            </div>
 
-            <div className="space-y-4">
+            <div
+              className="space-y-4"
+              role="radiogroup"
+              aria-labelledby={`question-heading-${currentQuestion}`}
+              aria-describedby={`question-voice-hint-${currentQuestion}`}
+            >
               {currentQuestionData.options.map((option) => (
                 <label
                   key={option.value}
@@ -127,6 +158,9 @@ export function RightsCheckerPage() {
                 </label>
               ))}
             </div>
+            <p id={`question-voice-hint-${currentQuestion}`} className="sr-only">
+              Use Listen to question to hear this question and all choices read aloud.
+            </p>
           </div>
 
           {/* Navigation Buttons */}

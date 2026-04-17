@@ -1,9 +1,12 @@
+import { useMemo, useState } from "react";
 import { Link } from "react-router";
 import { Navigation } from "../components/Navigation";
-import { 
-  HelpCircle, 
-  Phone, 
-  Mail, 
+import { VoiceToolbar } from "../components/VoiceToolbar";
+import { useSpeechSynthesis } from "../hooks/useSpeechSynthesis";
+import {
+  HelpCircle,
+  Phone,
+  Mail,
   ExternalLink,
   ChevronDown,
   MessageCircle,
@@ -12,12 +15,8 @@ import {
   Building,
   ArrowRight,
 } from "lucide-react";
-import { useState } from "react";
 
-export function HelpPage() {
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
-
-  const faqs = [
+const HELP_FAQS = [
     {
       question: "What if I don't have a receipt?",
       answer: "You may still have rights even without a receipt. Other proof of purchase can include bank or credit card statements, email confirmations, warranty cards, or witness testimony. Australian Consumer Law doesn't require a receipt for your rights to apply.",
@@ -52,7 +51,7 @@ export function HelpPage() {
     },
   ];
 
-  const supportOptions = [
+const HELP_SUPPORT_OPTIONS = [
     {
       title: "Consumer Affairs Victoria",
       icon: Building,
@@ -79,28 +78,97 @@ export function HelpPage() {
     },
   ];
 
+export function HelpPage() {
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const { speak, stop, isSpeaking } = useSpeechSynthesis();
+
+  const introSpeech = useMemo(
+    () =>
+      "Help page. Still unsure? Find answers to common questions or get in touch for support. " +
+      "Below you will find frequently asked questions, professional contacts, quick links, and a short note about free phone help.",
+    [],
+  );
+
+  const faqSpeech = useMemo(
+    () =>
+      "Frequently asked questions. " +
+      HELP_FAQS.map((f) => `Question: ${f.question} Answer: ${f.answer}`).join(" "),
+    [],
+  );
+
+  const supportSpeech = useMemo(
+    () =>
+      "Get professional support. " +
+      HELP_SUPPORT_OPTIONS.map(
+        (o) =>
+          `${o.title}. ${o.description}. Phone or contact: ${o.contact}. Website: ${o.website}.`,
+      ).join(" "),
+    [],
+  );
+
+  const quickLinksSpeech = useMemo(
+    () =>
+      "Quick links. Large buttons below. Check your rights: start the guided process to understand your situation. " +
+      "Complaint template: use our ready-made letter. Step-by-step guide: see what to do in the right order. " +
+      "Back to home: return to the main page. Tap a card to open that page.",
+    [],
+  );
+
+  const calloutSpeech = useMemo(
+    () =>
+      "Need to speak with someone? The contact numbers above connect you with trained advisors who can help with your specific situation. " +
+      "These services are free and confidential.",
+    [],
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Navigation />
       
       <div className="max-w-7xl mx-auto px-6 py-12">
         <div className="max-w-5xl mx-auto">
-          <div className="mb-12 text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">Still unsure?</h1>
-            <p className="text-xl text-gray-600">
-              Find answers to common questions or get in touch for support
-            </p>
+          <div className="mb-12">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6 mb-4">
+              <div className="text-center sm:text-left flex-1">
+                <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+                  Still unsure?
+                </h1>
+                <p className="text-xl text-gray-600 leading-relaxed">
+                  Find answers to common questions or get in touch for support
+                </p>
+              </div>
+              <VoiceToolbar
+                speak={speak}
+                stop={stop}
+                isSpeaking={isSpeaking}
+                speechText={introSpeech}
+                listenLabel="Listen to intro"
+                variant="dark"
+                className="shrink-0 justify-center sm:justify-end"
+              />
+            </div>
           </div>
 
           {/* FAQ Section */}
           <div className="mb-16">
-            <div className="flex items-center gap-3 mb-8">
-              <HelpCircle className="w-8 h-8 text-blue-600" />
-              <h2 className="text-3xl font-bold text-gray-900">Frequently asked questions</h2>
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-8">
+              <div className="flex items-center gap-3">
+                <HelpCircle className="w-8 h-8 text-blue-600 shrink-0" />
+                <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Frequently asked questions</h2>
+              </div>
+              <VoiceToolbar
+                speak={speak}
+                stop={stop}
+                isSpeaking={isSpeaking}
+                speechText={faqSpeech}
+                listenLabel="Listen to FAQs"
+                variant="dark"
+                className="shrink-0"
+              />
             </div>
 
             <div className="space-y-4">
-              {faqs.map((faq, index) => (
+              {HELP_FAQS.map((faq, index) => (
                 <div
                   key={index}
                   className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden"
@@ -132,9 +200,20 @@ export function HelpPage() {
 
           {/* Support Options */}
           <div className="mb-16">
-            <h2 className="text-3xl font-bold text-gray-900 mb-8">Get professional support</h2>
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between mb-8">
+              <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">Get professional support</h2>
+              <VoiceToolbar
+                speak={speak}
+                stop={stop}
+                isSpeaking={isSpeaking}
+                speechText={supportSpeech}
+                listenLabel="Listen to contacts"
+                variant="dark"
+                className="shrink-0"
+              />
+            </div>
             <div className="grid gap-6">
-              {supportOptions.map((option) => {
+              {HELP_SUPPORT_OPTIONS.map((option) => {
                 const Icon = option.icon;
                 return (
                   <div
@@ -186,9 +265,20 @@ export function HelpPage() {
             >
               Quick links
             </h2>
-            <p className="text-lg sm:text-xl text-blue-100 font-medium mb-8 max-w-3xl leading-relaxed">
-              Large buttons below — tap to open each page.
-            </p>
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between mb-8">
+              <p className="text-lg sm:text-xl text-blue-100 font-medium max-w-3xl leading-relaxed flex-1">
+                Large buttons below — tap to open each page.
+              </p>
+              <VoiceToolbar
+                speak={speak}
+                stop={stop}
+                isSpeaking={isSpeaking}
+                speechText={quickLinksSpeech}
+                listenLabel="Listen to quick links"
+                variant="light"
+                className="shrink-0"
+              />
+            </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
               <Link
                 to="/issue-selection"
@@ -263,17 +353,28 @@ export function HelpPage() {
 
           {/* Additional Info */}
           <div className="mt-8 p-6 bg-yellow-50 border-2 border-yellow-200 rounded-xl">
-            <div className="flex items-start gap-4">
-              <MessageCircle className="w-6 h-6 text-yellow-700 flex-shrink-0 mt-1" />
-              <div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                  Need to speak with someone?
-                </h3>
-                <p className="text-base text-gray-700">
-                  The contact numbers above connect you with trained advisors who can help with your specific situation. 
-                  These services are free and confidential. Don't hesitate to reach out if you need assistance.
-                </p>
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+              <div className="flex items-start gap-4 flex-1">
+                <MessageCircle className="w-6 h-6 text-yellow-700 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2">
+                    Need to speak with someone?
+                  </h3>
+                  <p className="text-base text-gray-700">
+                    The contact numbers above connect you with trained advisors who can help with your specific situation. 
+                    These services are free and confidential. Don't hesitate to reach out if you need assistance.
+                  </p>
+                </div>
               </div>
+              <VoiceToolbar
+                speak={speak}
+                stop={stop}
+                isSpeaking={isSpeaking}
+                speechText={calloutSpeech}
+                listenLabel="Listen to this note"
+                variant="dark"
+                className="shrink-0 self-start"
+              />
             </div>
           </div>
         </div>

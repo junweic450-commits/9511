@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link } from "react-router";
 import { Navigation } from "../components/Navigation";
-import { Copy, Download, Edit, CheckCircle, FileText, Receipt, Camera, Mail } from "lucide-react";
+import { VoiceToolbar } from "../components/VoiceToolbar";
+import { useSpeechSynthesis } from "../hooks/useSpeechSynthesis";
+import { Copy, Download, CheckCircle, FileText, Receipt, Camera, Mail } from "lucide-react";
 
 export function ComplaintTemplatePage() {
   const [copied, setCopied] = useState(false);
+  const { speak, stop, isSpeaking } = useSpeechSynthesis();
 
   const templateText = `[Your Name]
 [Your Address]
@@ -45,6 +48,15 @@ Yours sincerely,
 
 [Your Name]`;
 
+  const templateSpeech = useMemo(() => {
+    const body = templateText.replace(/\n/g, ". ").replace(/\s+/g, " ").trim();
+    return (
+      "Complaint letter template. Replace words in square brackets with your own details. " +
+      "Here is the full letter. " +
+      body
+    );
+  }, []);
+
   const handleCopy = () => {
     navigator.clipboard.writeText(templateText);
     setCopied(true);
@@ -80,12 +92,20 @@ Yours sincerely,
               <div className="bg-white rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden">
                 {/* Header */}
                 <div className="bg-gray-50 px-8 py-5 border-b-2 border-gray-200">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div className="flex items-center gap-3">
-                      <FileText className="w-6 h-6 text-blue-600" />
+                      <FileText className="w-6 h-6 text-blue-600 shrink-0" />
                       <h2 className="text-xl font-semibold text-gray-900">Complaint Letter Template</h2>
                     </div>
-                    <div className="flex gap-3">
+                    <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3">
+                      <VoiceToolbar
+                        speak={speak}
+                        stop={stop}
+                        isSpeaking={isSpeaking}
+                        speechText={templateSpeech}
+                        listenLabel="Listen to letter"
+                        variant="dark"
+                      />
                       <button
                         onClick={handleCopy}
                         className="flex items-center gap-2 px-5 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors"
@@ -113,10 +133,17 @@ Yours sincerely,
                   </div>
                 </div>
 
-                {/* Template Text */}
+                {/* Template Text (read-only text block with listen in header) */}
                 <div className="p-8">
-                  <div className="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                    <pre className="text-base text-gray-800 font-mono whitespace-pre-wrap leading-relaxed">
+                  <div
+                    className="bg-gray-50 rounded-lg p-6 border-2 border-gray-200"
+                    role="region"
+                    aria-label="Complaint letter text"
+                  >
+                    <pre
+                      className="text-base sm:text-lg text-gray-900 font-mono whitespace-pre-wrap leading-relaxed"
+                      tabIndex={0}
+                    >
                       {templateText}
                     </pre>
                   </div>

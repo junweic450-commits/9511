@@ -1,10 +1,12 @@
+import { useMemo } from "react";
 import { Link } from "react-router";
 import { Navigation } from "../components/Navigation";
 import { ProgressIndicator } from "../components/ProgressIndicator";
+import { VoiceToolbar } from "../components/VoiceToolbar";
+import { useSpeechSynthesis } from "../hooks/useSpeechSynthesis";
 import { Package, RefreshCw, AlertCircle, FileText, ShoppingBag, CreditCard, Wifi, Home } from "lucide-react";
 
-export function IssueSelectionPage() {
-  const issueCategories = [
+const ISSUE_CATEGORIES = [
     {
       icon: Package,
       title: "Faulty Product",
@@ -61,7 +63,24 @@ export function IssueSelectionPage() {
       examples: "Examples: Poor workmanship, incomplete work, overcharging",
       path: "/rights-checker?issue=home-service",
     },
-  ];
+  ] as const;
+
+export function IssueSelectionPage() {
+  const { speak, stop, isSpeaking } = useSpeechSynthesis();
+
+  const pageSpeech = useMemo(() => {
+    const intro =
+      "Common issues. What is your issue? Select the category that best describes your situation. ";
+    const blocks = ISSUE_CATEGORIES.map(
+      (c) => `${c.title}. ${c.description}. ${c.examples}.`,
+    ).join(" ");
+    return (
+      intro +
+      " Here are your choices. " +
+      blocks +
+      " Tap a card to continue to the rights checker. At the bottom you can go back home or open the help page."
+    );
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -75,13 +94,28 @@ export function IssueSelectionPage() {
         />
         
         <div className="mt-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">What is your issue?</h1>
-          <p className="text-xl text-gray-600 mb-12">
-            Select the category that best describes your situation
-          </p>
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between mb-8">
+            <div>
+              <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-4 leading-tight">
+                What is your issue?
+              </h1>
+              <p className="text-xl text-gray-600 max-w-3xl leading-relaxed">
+                Select the category that best describes your situation
+              </p>
+            </div>
+            <VoiceToolbar
+              speak={speak}
+              stop={stop}
+              isSpeaking={isSpeaking}
+              speechText={pageSpeech}
+              listenLabel="Listen to this page"
+              variant="dark"
+              className="shrink-0"
+            />
+          </div>
 
-          <div className="grid grid-cols-2 gap-6">
-            {issueCategories.map((category) => {
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {ISSUE_CATEGORIES.map((category) => {
               const Icon = category.icon;
               return (
                 <Link
