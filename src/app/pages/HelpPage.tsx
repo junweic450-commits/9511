@@ -9,7 +9,8 @@ import {
   MessageCircle,
   FileText,
   Scale,
-  Building
+  Building,
+  ArrowRight,
 } from "lucide-react";
 import { useState } from "react";
 
@@ -174,40 +175,91 @@ export function HelpPage() {
             </div>
           </div>
 
-          {/* Quick Links */}
-          <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-xl p-10 text-white">
-            <h2 className="text-3xl font-bold mb-6">Quick links</h2>
-            <div className="grid grid-cols-2 gap-4">
+          {/* Quick Links — high contrast cards for readability */}
+          <section
+            className="bg-gradient-to-br from-blue-700 to-blue-900 rounded-2xl p-8 sm:p-10 border-4 border-blue-800/40 shadow-xl"
+            aria-labelledby="help-quick-links-heading"
+          >
+            <h2
+              id="help-quick-links-heading"
+              className="text-3xl sm:text-4xl font-bold text-white mb-2 tracking-tight"
+            >
+              Quick links
+            </h2>
+            <p className="text-lg sm:text-xl text-blue-100 font-medium mb-8 max-w-3xl leading-relaxed">
+              Large buttons below — tap to open each page.
+            </p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6">
               <Link
                 to="/issue-selection"
-                className="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg p-6 transition-all backdrop-blur-sm"
+                className="group flex flex-col justify-between min-h-[140px] rounded-xl bg-white p-7 sm:p-8 border-4 border-white shadow-lg hover:shadow-xl hover:border-amber-300 focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-200 focus-visible:ring-offset-4 focus-visible:ring-offset-blue-800 transition-all"
               >
-                <h3 className="text-xl font-semibold mb-2">Check your rights</h3>
-                <p className="text-blue-100">Start the guided process to understand your situation</p>
+                <div>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 leading-tight">
+                    Check your rights
+                  </h3>
+                  <p className="text-lg sm:text-xl text-gray-700 leading-relaxed font-medium">
+                    Start the guided process to understand your situation
+                  </p>
+                </div>
+                <span className="mt-5 inline-flex items-center gap-2 text-xl font-bold text-blue-700 group-hover:text-blue-900">
+                  Open page
+                  <ArrowRight className="w-7 h-7 shrink-0" aria-hidden />
+                </span>
               </Link>
               <Link
                 to="/complaint-template"
-                className="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg p-6 transition-all backdrop-blur-sm"
+                className="group flex flex-col justify-between min-h-[140px] rounded-xl bg-white p-7 sm:p-8 border-4 border-white shadow-lg hover:shadow-xl hover:border-amber-300 focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-200 focus-visible:ring-offset-4 focus-visible:ring-offset-blue-800 transition-all"
               >
-                <h3 className="text-xl font-semibold mb-2">Complaint template</h3>
-                <p className="text-blue-100">Use our ready-made letter template</p>
+                <div>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 leading-tight">
+                    Complaint template
+                  </h3>
+                  <p className="text-lg sm:text-xl text-gray-700 leading-relaxed font-medium">
+                    Use our ready-made letter template
+                  </p>
+                </div>
+                <span className="mt-5 inline-flex items-center gap-2 text-xl font-bold text-blue-700 group-hover:text-blue-900">
+                  Open page
+                  <ArrowRight className="w-7 h-7 shrink-0" aria-hidden />
+                </span>
               </Link>
               <Link
                 to="/guidance"
-                className="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg p-6 transition-all backdrop-blur-sm"
+                className="group flex flex-col justify-between min-h-[140px] rounded-xl bg-white p-7 sm:p-8 border-4 border-white shadow-lg hover:shadow-xl hover:border-amber-300 focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-200 focus-visible:ring-offset-4 focus-visible:ring-offset-blue-800 transition-all"
               >
-                <h3 className="text-xl font-semibold mb-2">Step-by-step guide</h3>
-                <p className="text-blue-100">See what to do in the right order</p>
+                <div>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 leading-tight">
+                    Step-by-step guide
+                  </h3>
+                  <p className="text-lg sm:text-xl text-gray-700 leading-relaxed font-medium">
+                    See what to do in the right order
+                  </p>
+                </div>
+                <span className="mt-5 inline-flex items-center gap-2 text-xl font-bold text-blue-700 group-hover:text-blue-900">
+                  Open page
+                  <ArrowRight className="w-7 h-7 shrink-0" aria-hidden />
+                </span>
               </Link>
               <Link
                 to="/"
-                className="bg-white bg-opacity-20 hover:bg-opacity-30 rounded-lg p-6 transition-all backdrop-blur-sm"
+                className="group flex flex-col justify-between min-h-[140px] rounded-xl bg-white p-7 sm:p-8 border-4 border-white shadow-lg hover:shadow-xl hover:border-amber-300 focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-200 focus-visible:ring-offset-4 focus-visible:ring-offset-blue-800 transition-all"
               >
-                <h3 className="text-xl font-semibold mb-2">Back to home</h3>
-                <p className="text-blue-100">Return to the main page</p>
+                <div>
+                  <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 leading-tight">
+                    Back to home
+                  </h3>
+                  <p className="text-lg sm:text-xl text-gray-700 leading-relaxed font-medium">
+                    Return to the main page
+                  </p>
+                </div>
+                <span className="mt-5 inline-flex items-center gap-2 text-xl font-bold text-blue-700 group-hover:text-blue-900">
+                  Open page
+                  <ArrowRight className="w-7 h-7 shrink-0" aria-hidden />
+                </span>
               </Link>
             </div>
-          </div>
+          </section>
 
           {/* Additional Info */}
           <div className="mt-8 p-6 bg-yellow-50 border-2 border-yellow-200 rounded-xl">
